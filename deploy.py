@@ -25,8 +25,9 @@ compiled_sol = compile_standard(
     solc_version="0.8.0",
 )
 
-with open("compiled.json", "w") as f:
-    json.dump(compiled_sol, f)
+with open("compiled.json", "w", encoding="utf-8") as f:
+    json.dump(compiled_sol, f, ensure_ascii=False, indent=4)
+
 
 # ABI и Bytecode
 abi = compiled_sol["contracts"]["SimpleToken.sol"]["SimpleToken"]["abi"]
@@ -42,7 +43,6 @@ private_key = PRIVATE_KEY
 account = w3.eth.account.from_key(private_key)
 account_address = account.address
 
-# Создаем транзакцию на деплой
 SimpleToken = w3.eth.contract(abi=abi, bytecode=bytecode)
 
 nonce = w3.eth.get_transaction_count(account_address)
@@ -59,4 +59,17 @@ tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
 tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
 
 contract_address = tx_receipt.contractAddress
-print("Contract deployed at:", contract_address)
+
+if __name__ == "__main__":
+# Создаем транзакцию на деплой
+
+    print("Contract deployed at:", contract_address)
+
+
+##
+# Мы используем Python для того, чтобы:
+#
+# Скомпилировать смарт-контракт на Solidity.
+# Подключиться к удаленному Ethereum-совместимому узлу (в данном случае — тестовой сети Sepolia через Infura).
+# Подписать и отправить транзакцию для деплоя (развертывания) контракта в сеть.
+# Дождаться подтверждения транзакции и получить адрес развернутого контракта.
